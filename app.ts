@@ -1,13 +1,43 @@
-const skills: readonly [{ number?: number }, string, number] = [
-	{ number: 1 },
-	'React',
-	1,
-];
+// {
+// 	"topicId": 5,
+// 	"status": "published" // "draft", "deleted"
+// }
 
-skills[0].number = 2;
+// [
+// 	{
+// 		"question": "Как осуществляется доставка",
+// 		"answer": "быстро!",
+// 		"tags": [
+// 			"popular",
+// 			"new"
+// 		],
+// 		"likes": 3,
+// 		"status": "published"
+// 	}
+// ]
 
-skills.forEach(skill => console.log(skill));
+const enum reqStatus {
+	published = 'published',
+	draft = 'draft',
+	deleted = 'deleted',
+}
 
-const obj: Readonly<{ arr: string[] }> = { arr: ['1', '2'] };
-
-// obj.arr = ['1'];
+const getFaqs = async (req: {
+	topicId: number;
+	status?: reqStatus;
+}): Promise<
+	{
+		question: string;
+		answer: string;
+		tags: string[];
+		likes: number;
+		status: reqStatus;
+	}[]
+> => {
+	const res = await fetch('/faqs', {
+		method: 'POST',
+		body: JSON.stringify(req),
+	});
+	const data = await res.json();
+	return data;
+};
