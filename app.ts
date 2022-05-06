@@ -1,43 +1,23 @@
-// {
-// 	"topicId": 5,
-// 	"status": "published" // "draft", "deleted"
-// }
+function logId(id: number | string | { a: number } | [1, 2]) {
+	if (typeof id === 'string') {
+		console.log(id.includes('Hello'));
+		return;
+	}
 
-// [
-// 	{
-// 		"question": "Как осуществляется доставка",
-// 		"answer": "быстро!",
-// 		"tags": [
-// 			"popular",
-// 			"new"
-// 		],
-// 		"likes": 3,
-// 		"status": "published"
-// 	}
-// ]
+	if (typeof id === 'number') {
+		console.log(id.toFixed(2));
+		return;
+	}
 
-const enum reqStatus {
-	published = 'published',
-	draft = 'draft',
-	deleted = 'deleted',
+	if (Array.isArray(id)) {
+		console.log(id.length);
+		return;
+	}
+
+	console.log(id.a);
 }
 
-const getFaqs = async (req: {
-	topicId: number;
-	status?: reqStatus;
-}): Promise<
-	{
-		question: string;
-		answer: string;
-		tags: string[];
-		likes: number;
-		status: reqStatus;
-	}[]
-> => {
-	const res = await fetch('/faqs', {
-		method: 'POST',
-		body: JSON.stringify(req),
-	});
-	const data = await res.json();
-	return data;
-};
+logId(1);
+logId('1');
+logId({ a: 1 });
+logId([1, 2]);
