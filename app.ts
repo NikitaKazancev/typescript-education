@@ -1,23 +1,19 @@
-function logId(id: number | string | { a: number } | [1, 2]) {
-	if (typeof id === 'string') {
-		console.log(id.includes('Hello'));
-		return;
-	}
-
-	if (typeof id === 'number') {
-		console.log(id.toFixed(2));
-		return;
-	}
-
-	if (Array.isArray(id)) {
-		console.log(id.length);
-		return;
-	}
-
-	console.log(id.a);
+function fetchWithAuth(url: string, method: 'post' | 'get'): 1 | -1 {
+	return 1;
 }
 
-logId(1);
-logId('1');
-logId({ a: 1 });
-logId([1, 2]);
+fetchWithAuth('s', 'get');
+
+const method = 'post';
+
+fetchWithAuth('s', method as 'post');
+
+const body: {
+	method: 'post' | 'get';
+} = {
+	method: 'post',
+};
+
+fetchWithAuth('s', body.method);
+fetchWithAuth('s', body.method as 'post');
+fetchWithAuth('s', body.method as 'get'); // ???
