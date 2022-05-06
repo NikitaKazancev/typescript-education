@@ -1,27 +1,13 @@
-const getFullName = (user: { name: string; surname: string }): string => {
-	return `${user.name} ${user.surname}`;
-};
+const skills: readonly [{ number?: number }, string, number] = [
+	{ number: 1 },
+	'React',
+	1,
+];
 
-const user: {
-	officeId: number;
-	isOpened: boolean;
-	contacts: {
-		phone: string;
-		email: string;
-		address: {
-			city: string;
-		};
-	};
-} = {
-	officeId: 45,
-	isOpened: false,
-	contacts: {
-		phone: '+79100000000',
-		email: 'my@email.ru',
-		address: {
-			city: 'Москва',
-		},
-	},
-};
+skills[0].number = 2;
 
-console.table(user);
+skills.forEach(skill => console.log(skill));
+
+const obj: Readonly<{ arr: string[] }> = { arr: ['1', '2'] };
+
+// obj.arr = ['1'];
