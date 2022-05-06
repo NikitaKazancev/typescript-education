@@ -1,19 +1,21 @@
-function fetchWithAuth(url: string, method: 'post' | 'get'): 1 | -1 {
-	return 1;
-}
+type httpMethod = 'post' | 'get';
 
-fetchWithAuth('s', 'get');
-
-const method = 'post';
-
-fetchWithAuth('s', method as 'post');
-
-const body: {
-	method: 'post' | 'get';
-} = {
-	method: 'post',
+type User = {
+	name: string;
+	age: number;
+	skills: string[];
 };
 
-fetchWithAuth('s', body.method);
-fetchWithAuth('s', body.method as 'post');
-fetchWithAuth('s', body.method as 'get'); // ???
+type Role = {
+	name: string;
+	id: number;
+};
+
+type UserWithRole = User & Role;
+
+let user: UserWithRole = {
+	name: 'Nike',
+	age: 18,
+	skills: ['1', '2'],
+	id: 1,
+};
