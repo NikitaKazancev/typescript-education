@@ -1,40 +1,19 @@
-function generateError(message: string): never {
-	// никогда ничего не вернётся
-	throw new Error(message);
+const n: null = null;
+// const n1: number = null;
+// const n2: string = null;
+// const n3: boolean = null;
+// const n4: undefined = null;
+
+interface IUser {
+	name: string;
 }
 
-function dumpError(): never {
-	while (true) {}
+function getUser() {
+	if (Math.random() > 0.5) return;
+	else return { name: 'Nike' } as IUser;
 }
 
-function rec(): never {
-	return rec();
-}
-
-let a: never;
-let b: void;
-b = undefined;
-// a = undefined; // error
-
-type paymentAction = 'refund' | 'checkout'; // | 'reject'
-
-function processAction(action: paymentAction) {
-	switch (action) {
-		case 'checkout':
-			///
-			break;
-		case 'refund':
-			///
-			break;
-		default: // если с 'reject', то ошибка
-			const _: never = action;
-			throw new Error('Нет такого action');
-	}
-}
-
-function isString(a: string | number): boolean {
-	if (typeof a === 'string') return true;
-	else if (typeof a === 'number') return false;
-
-	generateError('dasdas'); // нет ошибки, т.к. generateError возвращает never
+const user = getUser();
+if (user) {
+	const n55 = user.name;
 }
