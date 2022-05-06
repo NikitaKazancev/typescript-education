@@ -1,30 +1,41 @@
-function logId(id: string | number) {
-	console.log(id);
+let input: unknown;
+
+input = 3;
+input = ['dwa', 'fwa'];
+
+// const str: string = input; // error
+
+function run(input: unknown) {
+	if (typeof input === 'number') {
+		input++;
+	} else if (typeof input === 'number') {
+		// unknown не исключает типы
+		input++;
+	}
 }
 
-const a = logId(1); // void
-
-function multiply(a: number, b?: number): number | void {
-	if (b) return a * b;
+async function getData(url: string) {
+	try {
+		await fetch(url);
+	} catch (error) {
+		if (error instanceof Error) {
+			console.log(error.message);
+		}
+	}
 }
 
-type voidFunction = () => void;
+async function getDataForce(url: string) {
+	try {
+		await fetch(url);
+	} catch (error) {
+		const e = error as Error; // если 100 % уверены, что error - объект ошибки
+		console.log(e.message);
+	}
+}
 
-const f1: voidFunction = () => {};
-const f2: voidFunction = () => ({ a: 1 });
+getData('url');
 
-// ???
-console.log(f2()); // { a: 1 }
-const b = f2(); // void
-console.log(b); // { a: 1 }
-
-// Необходимость
-const arr = [1, 2];
-
-const obj: {
-	arr: number[];
-} = {
-	arr: [],
-};
-
-arr.forEach(num => obj.arr.push(num)); // push возвращает number, поэтому callback возвращает void
+type U1 = unknown | null | string | number; // unknown
+type U2 = U1 | any; // any
+type U3 = U1 & string; // string
+type U4 = U1 & any; // any (не unknown)
