@@ -1,41 +1,40 @@
-let input: unknown;
+function generateError(message: string): never {
+	// никогда ничего не вернётся
+	throw new Error(message);
+}
 
-input = 3;
-input = ['dwa', 'fwa'];
+function dumpError(): never {
+	while (true) {}
+}
 
-// const str: string = input; // error
+function rec(): never {
+	return rec();
+}
 
-function run(input: unknown) {
-	if (typeof input === 'number') {
-		input++;
-	} else if (typeof input === 'number') {
-		// unknown не исключает типы
-		input++;
+let a: never;
+let b: void;
+b = undefined;
+// a = undefined; // error
+
+type paymentAction = 'refund' | 'checkout'; // | 'reject'
+
+function processAction(action: paymentAction) {
+	switch (action) {
+		case 'checkout':
+			///
+			break;
+		case 'refund':
+			///
+			break;
+		default: // если с 'reject', то ошибка
+			const _: never = action;
+			throw new Error('Нет такого action');
 	}
 }
 
-async function getData(url: string) {
-	try {
-		await fetch(url);
-	} catch (error) {
-		if (error instanceof Error) {
-			console.log(error.message);
-		}
-	}
+function isString(a: string | number): boolean {
+	if (typeof a === 'string') return true;
+	else if (typeof a === 'number') return false;
+
+	generateError('dasdas'); // нет ошибки, т.к. generateError возвращает never
 }
-
-async function getDataForce(url: string) {
-	try {
-		await fetch(url);
-	} catch (error) {
-		const e = error as Error; // если 100 % уверены, что error - объект ошибки
-		console.log(e.message);
-	}
-}
-
-getData('url');
-
-type U1 = unknown | null | string | number; // unknown
-type U2 = U1 | any; // any
-type U3 = U1 & string; // string
-type U4 = U1 & any; // any (не unknown)
