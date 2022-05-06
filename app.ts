@@ -1,113 +1,30 @@
-interface User {
-	login: string;
-	password?: string;
+function logId(id: string | number) {
+	console.log(id);
 }
 
-const user: User = {
-	login: 'my_login',
-};
+const a = logId(1); // void
 
-function multiply(a: number, b?: number): number {
+function multiply(a: number, b?: number): number | void {
 	if (b) return a * b;
-	else return a * a;
 }
 
-interface UserPro {
-	login: string;
-	password?: {
-		type: 'primary' | 'secondary';
-	};
-}
+type voidFunction = () => void;
 
-function testPass(user: UserPro) {
-	const type = user.password?.type;
-	// const type = user.password!.type; // если мы точно уверены, что password точно есть
-	console.log(type);
-}
+const f1: voidFunction = () => {};
+const f2: voidFunction = () => ({ a: 1 });
 
-testPass({ login: 'my_login', password: { type: 'primary' } });
+// ???
+console.log(f2()); // { a: 1 }
+const b = f2(); // void
+console.log(b); // { a: 1 }
 
-function test(param?: string): string | number {
-	return param ?? multiply(5);
-}
+// Необходимость
+const arr = [1, 2];
 
-// Упражнение
-
-// Запрос
-// {
-// 	"sum": 10000,
-// 	"from": 2,
-// 	"to": 4
-// }
-
-// Возможные ответы
-// {
-// 	"status": "success",
-// 	"data": {
-// 		"databaseId": 567,
-// 		"sum": 10000,
-// 		"from": 2,
-// 		"to": 4
-// 	}
-// }
-// {
-// 	"status": "failed",
-// 	"data": {
-// 		"errorMessage": "Недостаточно средств",
-// 		"errorCode": 4
-// 	}
-// }
-
-interface IPayment {
-	sum: number;
-	from: number;
-	to: number;
-}
-
-interface IPaymentRequest extends IPayment {}
-
-interface IErrorData {
-	errorMessage: string;
-	errorCode: number;
-}
-
-interface ISuccessData extends IPayment {
-	databaseId: number;
-}
-
-interface IResponseSuccess {
-	status: 'success';
-	data: ISuccessData;
-}
-
-interface IResponseError {
-	status: 'failed';
-	data: IErrorData;
-}
-
-function request(req: IPaymentRequest): IResponseSuccess | IResponseError {
-	if (req.sum >= 5000)
-		return {
-			status: 'success',
-			data: {
-				databaseId: 567,
-				...req,
-			},
-		};
-
-	return {
-		status: 'failed',
-		data: {
-			errorMessage: 'Недостаточно средств',
-			errorCode: 4,
-		},
-	};
-}
-
-const data: IPaymentRequest = {
-	sum: 5000,
-	from: 1,
-	to: 2,
+const obj: {
+	arr: number[];
+} = {
+	arr: [],
 };
 
-console.log(request(data));
+arr.forEach(num => obj.arr.push(num)); // push возвращает number, поэтому callback возвращает void
