@@ -1,64 +1,64 @@
-let a = 5;
-let b: string = a.toString();
-let e: string = new String(a).valueOf();
-let f: boolean = new Boolean(a).valueOf();
-
-let c = 'dwad';
-let d: number = parseFloat(c);
-
-interface IUser {
-	name: string;
-	email: string;
-	login: string;
+interface IPayment {
+	sum: number;
+	from: number;
+	to: number;
 }
 
-const user: IUser = {
-	name: 'Nike',
-	email: 'N140...',
-	login: 'Nike',
-};
-
-interface IAdmin {
-	name: string;
-	role: number;
+enum EPaymentStatus {
+	success = 'success',
+	failed = 'failed',
 }
 
-// const admin: IAdmin = {
-// 	...user,
-// 	role: 1,
-// };
-// email и login будут в admin
+interface IPaymentRequest extends IPayment {}
 
-function userToAdmin({ name }: IUser): IAdmin {
-	return {
-		name,
-		role: 1,
-	};
+interface IDataSuccess extends IPayment {
+	databaseId: number;
 }
 
-// type guards
-
-function isString(x: string | number): x is string {
-	return typeof x === 'string';
+interface IDataFailed {
+	errorMessage: string;
+	errorCode: number;
 }
 
-function logId(id: string | number) {
-	if (isString(id)) console.log(id);
-	else if (isString(id)) console.log(id);
+interface IResponseSuccess {
+	status: EPaymentStatus.success;
+	data: IDataSuccess;
 }
 
-function isAdmin(user: IUser | IAdmin): user is IAdmin {
-	return 'role' in user;
+interface IResponseFailed {
+	status: EPaymentStatus.failed;
+	data: IDataFailed;
 }
 
-function isAdminAlternative(user: IUser | IAdmin): user is IAdmin {
-	return (user as IAdmin).role !== undefined;
+type TRes = IResponseSuccess | IResponseFailed;
+
+function isSuccessRes(res: TRes): res is IResponseSuccess {
+	return res.status === EPaymentStatus.success;
 }
 
-function setRoleZero(user: IUser | IAdmin) {
-	if (isAdmin(user)) {
-		user.role = 0;
-	} else {
-		throw new Error('Пользователь не админ');
-	}
+function getIdFromData(res: TRes): number | never {
+	if (isSuccessRes(res)) return res.data.databaseId;
+	throw new Error(res.data.errorMessage);
 }
+
+console.log(
+	getIdFromData({
+		status: EPaymentStatus.success,
+		data: {
+			databaseId: 10,
+			from: 1,
+			sum: 2,
+			to: 3,
+		},
+	})
+);
+
+console.log(
+	getIdFromData({
+		status: EPaymentStatus.failed,
+		data: {
+			errorCode: 404,
+			errorMessage: 'Not found',
+		},
+	})
+);
