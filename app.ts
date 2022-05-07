@@ -1,16 +1,12 @@
 class User {
-	name: string;
-	age: number;
+	skills: string[];
 
-	constructor();
-	constructor(name: string);
-	constructor(age: number);
-	constructor(ageOrName?: string | number) {
-		if (typeof ageOrName === 'string') this.name = ageOrName;
-		else if (typeof ageOrName === 'number') this.age = ageOrName;
+	addSkill(skill: string): void;
+	addSkill(skills: string[]): void;
+	addSkill(data: string | string[]): void {
+		if (typeof data === 'string') this.skills.push(data);
+		else this.skills.concat(data);
 	}
 }
 
-const user = new User('Nike');
-const user2 = new User();
-const user3 = new User(10);
+new User().addSkill('dwa');
