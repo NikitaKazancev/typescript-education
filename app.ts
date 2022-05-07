@@ -1,19 +1,64 @@
-const n: null = null;
-// const n1: number = null;
-// const n2: string = null;
-// const n3: boolean = null;
-// const n4: undefined = null;
+let a = 5;
+let b: string = a.toString();
+let e: string = new String(a).valueOf();
+let f: boolean = new Boolean(a).valueOf();
+
+let c = 'dwad';
+let d: number = parseFloat(c);
 
 interface IUser {
 	name: string;
+	email: string;
+	login: string;
 }
 
-function getUser() {
-	if (Math.random() > 0.5) return;
-	else return { name: 'Nike' } as IUser;
+const user: IUser = {
+	name: 'Nike',
+	email: 'N140...',
+	login: 'Nike',
+};
+
+interface IAdmin {
+	name: string;
+	role: number;
 }
 
-const user = getUser();
-if (user) {
-	const n55 = user.name;
+// const admin: IAdmin = {
+// 	...user,
+// 	role: 1,
+// };
+// email и login будут в admin
+
+function userToAdmin({ name }: IUser): IAdmin {
+	return {
+		name,
+		role: 1,
+	};
+}
+
+// type guards
+
+function isString(x: string | number): x is string {
+	return typeof x === 'string';
+}
+
+function logId(id: string | number) {
+	if (isString(id)) console.log(id);
+	else if (isString(id)) console.log(id);
+}
+
+function isAdmin(user: IUser | IAdmin): user is IAdmin {
+	return 'role' in user;
+}
+
+function isAdminAlternative(user: IUser | IAdmin): user is IAdmin {
+	return (user as IAdmin).role !== undefined;
+}
+
+function setRoleZero(user: IUser | IAdmin) {
+	if (isAdmin(user)) {
+		user.role = 0;
+	} else {
+		throw new Error('Пользователь не админ');
+	}
 }
