@@ -1,80 +1,43 @@
-interface IProduct {
-	id: number;
-	name: string;
-	price: number;
-}
+// abstract class Controller {
+// 	abstract handle(req: any): void;
 
-interface IDeliveryHome {
-	date: Date;
-	address: string;
-}
+// 	num: number = 10;
+// 	str: string;
 
-interface IDeliveryShop {
-	date?: Date;
-	id: number;
-}
+// 	logId(id: number) {
+// 		console.log(id);
+// 	}
+// }
 
-type IDelivery = IDeliveryHome | IDeliveryShop;
+// interface IController {
+// 	handle2(req: any): void;
+// }
 
-class Cart {
-	private products: IProduct[] = [];
-	private delivery: IDelivery;
+// class UserController extends Controller implements IController {
+// 	handle = (req: any): void => {};
+// 	handle2(req: any): void {}
+// }
 
-	addProduct(product: IProduct): this {
-		this.products.push(product);
-		return this;
-	}
+// const user = new UserController();
+// user.logId(10);
 
-	deleteProduct(id: number): this {
-		this.products = this.products.filter(
-			(product: IProduct) => product.id !== id
-		);
-		return this;
-	}
+abstract class Logger {
+	abstract log(message: string): void;
 
-	calcCost(): number {
-		let res: number = 0;
-		this.products.forEach(product => (res += product.price));
-		return res;
-	}
-
-	setDelivery(delivery: IDeliveryHome): void;
-	setDelivery(delivery: IDeliveryShop): void;
-	setDelivery(delivery: IDelivery): void {
-		if (!delivery.date) delivery.date = new Date();
-		this.delivery = delivery;
-	}
-
-	checkout() {
-		if (this.products.length && this.delivery) {
-			console.log('\nProducts: ', this.products);
-			console.log("\nDelivery's data: ", this.delivery, '\n');
-		}
+	printDate() {
+		this.log(new Date().toLocaleString());
 	}
 }
 
-const card = new Cart();
-card
-	.addProduct({
-		id: 1,
-		name: 'Chocolate',
-		price: 100,
-	})
-	.addProduct({
-		id: 2,
-		name: 'Muffin',
-		price: 200,
-	})
-	.addProduct({
-		id: 3,
-		name: 'Cake',
-		price: 1000,
-	})
-	.deleteProduct(2)
-	.setDelivery({
-		date: new Date(),
-		address: 'my cool address',
-	});
+class RealLogger extends Logger {
+	log(message: string): void {
+		console.log(message);
+	}
 
-console.log(card.calcCost());
-card.checkout();
+	logWithDate(message: string) {
+		this.printDate();
+		this.log(message);
+	}
+}
+const logger = new RealLogger();
+logger.logWithDate('Hello');
