@@ -1,44 +1,35 @@
-// abstract class Controller {
-// 	abstract handle(req: any): void;
+const arr: Array<number> = [1, 2, 3];
 
-// 	num: number = 10;
-// 	str: string;
-
-// 	logId(id: number) {
-// 		console.log(id);
-// 	}
-// }
-
-// interface IController {
-// 	handle2(req: any): void;
-// }
-
-// class UserController extends Controller implements IController {
-// 	handle = (req: any): void => {};
-// 	handle2(req: any): void {}
-// }
-
-// const user = new UserController();
-// user.logId(10);
-
-abstract class Logger {
-	abstract log(message: string): void;
-
-	printDate() {
-		this.log(new Date().toLocaleString());
-	}
+async function test() {
+	const res = await new Promise<number>((resolve, reject) => {
+		resolve(1);
+	});
 }
 
-/* @internal */
-class RealLogger extends Logger {
-	log(message: string): void {
-		console.log(message);
-	}
+const check: Record<string | 1, boolean | number> = {
+	one: true,
+	two: 2,
+	1: false,
+};
 
-	logWithDate(message: string) {
-		this.printDate();
-		this.log(message);
-	}
+// function logMiddleware(data: any): any {
+// 	console.log(data);
+// 	return data;
+// }
+
+// const res = logMiddleware(10) as number;
+
+function logMiddleware<T>(data: T): T {
+	console.log(data);
+	return data;
 }
-const logger = new RealLogger();
-logger.logWithDate('Hello');
+
+// const res = logMiddleware<string>(10);
+const res = logMiddleware<number>(10);
+
+function getSplitedHalf<T>(arr: T[]): T[] {
+	const len = arr.length / 2;
+	return arr.splice(0, len);
+}
+
+getSplitedHalf<number>([1, 2, 3]);
