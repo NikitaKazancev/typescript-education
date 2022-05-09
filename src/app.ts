@@ -29,6 +29,7 @@ abstract class Logger {
 	}
 }
 
+/* @internal */
 class RealLogger extends Logger {
 	log(message: string): void {
 		console.log(message);
