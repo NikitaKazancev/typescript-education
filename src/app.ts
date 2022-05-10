@@ -1,21 +1,38 @@
-class Resp<D, E> {
-	constructor(public data?: D, public error?: E) {}
+type TConstructor = new (...args: any[]) => {};
+type TGConstructor<T = {}> = new (...args: any[]) => T;
+
+class List {
+	items: string[];
 }
 
-const res = new Resp('data');
-res.error;
-
-class HTTPResp<F> extends Resp<string, number> {
-	private _code: F;
-
-	set code(code: F) {
-		this._code = code;
-	}
-
-	get code(): F {
-		return this._code;
-	}
+class Accordion {
+	isOpened: boolean;
 }
 
-const resp2 = new HTTPResp();
-resp2.code;
+// типы, которые определяют класс с установленными в интерфейс полями
+type TList = TGConstructor<List>;
+type TAccordion = TGConstructor<Accordion>;
+
+// class ExtendedListClass extends List {
+// 	first() {
+// 		return this.items[0];
+// 	}
+// }
+
+function ExtendedList<TBase extends TList & TAccordion>(Base: TBase) {
+	return class ExtendedList extends Base {
+		first() {
+			console.log(this.isOpened);
+			return this.items[0];
+		}
+	};
+}
+
+class AccordionList {
+	isOpened: boolean;
+	constructor(public items: string[]) {}
+}
+
+const list = ExtendedList(AccordionList);
+const res = new list(['first', 'second']);
+console.log(res.first());
