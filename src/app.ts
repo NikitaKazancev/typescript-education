@@ -1,24 +1,21 @@
-class Vehicle {
-	run: number;
+class Resp<D, E> {
+	constructor(public data?: D, public error?: E) {}
 }
 
-function kmToMiles<T extends Vehicle>(vehicle: T): T {
-	vehicle.run = vehicle.run / 0.62;
-	return vehicle;
+const res = new Resp('data');
+res.error;
+
+class HTTPResp<F> extends Resp<string, number> {
+	private _code: F;
+
+	set code(code: F) {
+		this._code = code;
+	}
+
+	get code(): F {
+		return this._code;
+	}
 }
 
-class LCV extends Vehicle {
-	capacity: number;
-}
-
-const lcv = kmToMiles<LCV>(new LCV());
-kmToMiles({ run: 1 });
-
-function logId<T extends string | number, Y>(
-	id: T,
-	additionalData: Y
-): { id: T; data: Y } {
-	console.log(id);
-	console.log(additionalData);
-	return { id, data: additionalData };
-}
+const resp2 = new HTTPResp();
+resp2.code;
