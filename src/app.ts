@@ -1,36 +1,47 @@
-interface IRole {
-	name: string;
+const a: number = Math.random() > 0.5 ? 1 : 0;
+
+interface IHTTPResponse<T extends 'success' | 'failed'> {
+	code: number;
+	data1: T extends 'success' ? string : Error;
+	// data2: T extends 'success' ? number : string;
 }
 
-interface IPermission {
-	endDate: Date;
-}
-
-interface IUser {
-	name: string;
-	roles: IRole[];
-	permission: IPermission;
-}
-
-const user: IUser = {
-	name: 'Nike',
-	roles: [],
-	permission: {
-		endDate: new Date(),
-	},
+const obj: IHTTPResponse<'success'> = {
+	code: 200,
+	data1: 'my data',
 };
 
-if (typeof user == 'bigint') {
+const obj2: IHTTPResponse<'failed'> = {
+	code: 404,
+	data1: new Error('not found'),
+};
+
+class User {
+	id: number;
+	name: string;
 }
 
-const userName = user['name'];
-const roleNames = 'roles';
+class UserPersistent extends User {
+	dbId: string;
+}
 
-type rolesTypes = IUser['roles'];
-type rolesTypes2 = IUser[typeof roleNames];
+function getUser(id: number): User;
+function getUser(id: string): UserPersistent;
+function getUser(id: number | string): User | UserPersistent {
+	if (typeof id === 'number') return new User();
+	return new UserPersistent();
+}
 
-type roleType = IUser['roles'][number]; // IRole
-type dateType = IUser['permission']['endDate'];
+// getUser()
 
-const roles = ['admin', 'user', 'super-user'] as const;
-type roleTypes = typeof roles[number]; // only with 'as const'
+type UserOrUserPersistentT<T extends number | string> = T extends number
+	? User
+	: UserPersistent;
+function getUserConditional<T extends number | string>(
+	id: T
+): UserOrUserPersistentT<T> {
+	if (typeof id === 'number') return new User() as UserOrUserPersistentT<T>;
+	return new UserPersistent() as UserOrUserPersistentT<T>;
+}
+
+// getUserConditional()
