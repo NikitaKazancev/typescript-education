@@ -1,23 +1,36 @@
-let stringOrNumber: string | number;
-
-if (Math.random() > 0.5) stringOrNumber = 5;
-else stringOrNumber = 'str';
-
-if (typeof stringOrNumber == 'string') console.log(stringOrNumber);
-else console.log(stringOrNumber);
-
-let strOrNum: typeof stringOrNumber;
-
-const user = {
-	name: 'User',
-	age: 18,
-};
-
-type keyOfUser = keyof typeof user; // name | age
-
-enum Direction {
-	UP,
-	DOWN,
+interface IRole {
+	name: string;
 }
 
-type d = keyof typeof Direction;
+interface IPermission {
+	endDate: Date;
+}
+
+interface IUser {
+	name: string;
+	roles: IRole[];
+	permission: IPermission;
+}
+
+const user: IUser = {
+	name: 'Nike',
+	roles: [],
+	permission: {
+		endDate: new Date(),
+	},
+};
+
+if (typeof user == 'bigint') {
+}
+
+const userName = user['name'];
+const roleNames = 'roles';
+
+type rolesTypes = IUser['roles'];
+type rolesTypes2 = IUser[typeof roleNames];
+
+type roleType = IUser['roles'][number]; // IRole
+type dateType = IUser['permission']['endDate'];
+
+const roles = ['admin', 'user', 'super-user'] as const;
+type roleTypes = typeof roles[number]; // only with 'as const'
