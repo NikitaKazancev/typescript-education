@@ -1,27 +1,18 @@
-interface IForm {
-	name: string;
-	password: string;
+type AnimationName = 'fade' | 'unFade';
+type AnimationFunction = 'in' | 'out' | 'inOut';
+
+type AnimationT =
+	`${Capitalize<AnimationName>}${Capitalize<AnimationFunction>}`;
+
+type ErrorOrSuccess = 'error' | 'success';
+interface IResponse {
+	result: `http${Capitalize<ErrorOrSuccess>}`;
 }
 
-const form: IForm = {
-	name: 'Nike',
-	password: '123',
+const a: IResponse = {
+	result: 'httpError',
 };
 
-interface ISuccessValidation {
-	isValid: true;
-}
-
-interface IFailedValidation {
-	isValid: false;
-	errorMessage: string;
-}
-
-type Validation<T> = {
-	[key in keyof T]: ISuccessValidation | IFailedValidation;
-};
-
-const resp: Validation<IForm> = {
-	name: { isValid: true },
-	password: { isValid: false, errorMessage: 'error' },
-};
+// infer
+type Pull<T> = T extends `Fade${infer R}` ? R : never;
+type AnimationFunction2 = Pull<AnimationT>;
