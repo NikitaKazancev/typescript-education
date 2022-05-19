@@ -1,14 +1,27 @@
-type Modifier = 'read' | 'update' | 'create';
+interface IForm {
+	name: string;
+	password: string;
+}
 
-type UserRoles = {
-	customers?: Modifier;
-	projects?: Modifier;
-	adminPanel?: Modifier;
+const form: IForm = {
+	name: 'Nike',
+	password: '123',
 };
 
-type UserAccess = {
-	+readonly [key in keyof UserRoles as Exclude<
-		`canAccess${Capitalize<key>}`,
-		'canAccessAdminPanel'
-	>]-?: boolean;
+interface ISuccessValidation {
+	isValid: true;
+}
+
+interface IFailedValidation {
+	isValid: false;
+	errorMessage: string;
+}
+
+type Validation<T> = {
+	[key in keyof T]: ISuccessValidation | IFailedValidation;
+};
+
+const resp: Validation<IForm> = {
+	name: { isValid: true },
+	password: { isValid: false, errorMessage: 'error' },
 };
