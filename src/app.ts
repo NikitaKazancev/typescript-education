@@ -3,20 +3,31 @@ interface IUserService {
 	getUsersInDB(): number;
 }
 
-@setUsers(2)
+// type CreatedAtD = {
+// 	createdAt: Date
+// }
+
+// type IUserServiceT = IUserService & CreatedAtD;
+@CreatedAt
 class UserService implements IUserService {
 	users: number = 1000;
+	// createdAt: Date;
+
 	getUsersInDB(): number {
 		return this.users;
 	}
 }
 
-function setUsers(users: number) {
-	return <T extends new (...args: any[]) => {}>(constructor: T) => {
-		return class extends constructor {
-			users: number = users;
-		};
+function CreatedAt<T extends new (...args: any[]) => {}>(Class: T) {
+	return class extends Class {
+		createdAt: string = new Date().toLocaleString();
 	};
 }
 
-console.log(new UserService().getUsersInDB());
+type CreatedAt = {
+	createdAt: string;
+};
+
+type CreatedAtD = IUserService & CreatedAt;
+
+console.log((new UserService() as CreatedAtD).createdAt);
