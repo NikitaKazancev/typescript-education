@@ -4,36 +4,32 @@ interface IUserService {
 }
 
 class UserService implements IUserService {
+	@Max(100)
 	users: number = 1000;
 
-	@Catch({ rethrow: true })
 	getUsersInDB(): number {
 		throw new Error('Error :(');
 	}
 }
 
-interface ICatch {
-	rethrow: boolean;
-}
-function Catch({ rethrow }: ICatch = { rethrow: false }) {
-	return (
-		target: Object,
-		_: string,
-		descriptor: TypedPropertyDescriptor<(...args: any[]) => any>
-	): TypedPropertyDescriptor<(...args: any[]) => any> | void => {
-		const method = descriptor.value;
-		descriptor.value = (...args: any[]) => {
-			try {
-				return method?.apply(target, args);
-			} catch (error) {
-				if (error instanceof Error) {
-					console.error(error.message);
+function Max(max: number) {
+	return (target: Object, propertyKey: string) => {
+		let value: number;
 
-					if (rethrow) throw error;
-				}
-			}
-		};
+		Object.defineProperty(target, propertyKey, {
+			set: (newValue: number) => {
+				if (newValue > max) {
+					console.info(
+						`## В ${propertyKey} было записано максимальное значение ${max} вместо ${newValue}`
+					);
+					value = max;
+				} else value = newValue;
+			},
+			get: () => value,
+		});
 	};
 }
 
-console.log(new UserService().getUsersInDB());
+const userService = new UserService();
+userService.users = 1;
+console.log(userService.users);
