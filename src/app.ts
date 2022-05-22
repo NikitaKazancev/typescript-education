@@ -6,31 +6,33 @@ interface IUserService {
 class UserService implements IUserService {
 	users: number = 1000;
 
-	@Log()
+	@Catch({ rethrow: true })
 	getUsersInDB(): number {
 		throw new Error('Error :(');
-		// return 1;
 	}
 }
 
-function Log() {
+interface ICatch {
+	rethrow: boolean;
+}
+function Catch({ rethrow }: ICatch = { rethrow: false }) {
 	return (
 		target: Object,
-		propertyKey: string | symbol,
-		descriptor: TypedPropertyDescriptor<() => number>
-	): TypedPropertyDescriptor<() => number> | void => {
-		console.log(target);
-		console.log(propertyKey);
-		console.log(descriptor);
-		const oldValue = descriptor.value;
-		descriptor.value = () => {
-			console.log('no error');
-			if (oldValue) oldValue();
-			return 1;
+		_: string,
+		descriptor: TypedPropertyDescriptor<(...args: any[]) => any>
+	): TypedPropertyDescriptor<(...args: any[]) => any> | void => {
+		const method = descriptor.value;
+		descriptor.value = (...args: any[]) => {
+			try {
+				return method?.apply(target, args);
+			} catch (error) {
+				if (error instanceof Error) {
+					console.error(error.message);
+
+					if (rethrow) throw error;
+				}
+			}
 		};
-		// return {
-		// 	enumerable: true,
-		// };
 	};
 }
 
