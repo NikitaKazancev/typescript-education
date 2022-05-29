@@ -1,3 +1,4 @@
-import { a } from './modules/app2.js';
-
-console.log(a);
+import { toJson } from 'really-relaxed-json';
+const strangeJson = '[ one two three {foo:bar} ]';
+const json = toJson(strangeJson);
+console.log(json);

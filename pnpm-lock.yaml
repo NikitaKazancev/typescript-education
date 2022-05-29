@@ -1,12 +1,18 @@
 lockfileVersion: 5.4
 
 specifiers:
+  really-relaxed-json: ^0.3.1
   reflect-metadata: ^0.1.13
 
 devDependencies:
+  really-relaxed-json: 0.3.1
   reflect-metadata: 0.1.13
 
 packages:
+
+  /really-relaxed-json/0.3.1:
+    resolution: {integrity: sha512-IuYc1Vm2+M3Gr+rOmKEJkWKe7v268U+o/JWTwVUrCZrSb+L2tKWvYnWQoeNhCrrFadHzxuwpcFMO6++lv1CRMw==}
+    dev: true
 
   /reflect-metadata/0.1.13:
     resolution: {integrity: sha512-Ts1Y/anZELhSsjMcU605fU9RE4Oi3p5ORujwbIKXfWa+0Zxs510Qrmrce5/Jowq3cHSZSJqBjypxmHarc+vEWg==}
