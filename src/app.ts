@@ -1,69 +1,38 @@
-interface IInsurance {
-	id: number;
-	status: string;
-	setVehicle(vehicle: any): void;
-	submit(data: any): Promise<boolean>;
-}
+class MyMap {
+	private static instance: MyMap;
+	private constructor() {}
 
-abstract class InsuranceFactory {
-	db: any = 10;
-	// abstract createInsurance(): IInsurance;
+	map: Map<number, string> = new Map();
 
-	saveHistory(ins: IInsurance) {
-		this.db.save(ins.id, ins.status);
+	clean() {
+		this.map = new Map();
+	}
+
+	static get(): MyMap {
+		if (!this.instance) {
+			this.instance = new MyMap();
+		}
+
+		return this.instance;
 	}
 }
 
-class TFInsurance extends InsuranceFactory implements IInsurance {
-	id: number;
-	status: string;
-	private vehicle: any;
-
-	setVehicle(vehicle: any): void {
-		this.vehicle = vehicle;
-	}
-
-	async submit(data: any): Promise<boolean> {
-		const res = await fetch('', {
-			method: 'POST',
-			body: JSON.stringify(data),
-		});
-
-		return (await res.json()).isSuccess;
+class Service1 {
+	static addMap(key: number, value: string) {
+		MyMap.get().map.set(key, value);
 	}
 }
 
-// Своя какая-то реализация
-class ABInsurance extends InsuranceFactory implements IInsurance {
-	id: number;
-	status: string;
-	private vehicle: any;
-
-	setVehicle(vehicle: any): void {
-		this.vehicle = vehicle;
-	}
-
-	async submit(data: any): Promise<boolean> {
-		const res = await fetch('', {
-			method: 'POST',
-			body: JSON.stringify(data),
-		});
-
-		return (await res.json()).ok;
+class Service2 {
+	static getMap(key: number) {
+		console.log(MyMap.get().map.get(key));
+		MyMap.get().clean();
 	}
 }
 
-const abIns = new ABInsurance();
-abIns.submit(1);
-
-// class TFInsuranceFactory extends InsuranceFactory {
-// 	createInsurance(): TFInsurance {
-// 		return new TFInsurance();
-// 	}
-// }
-
-// class ABInsuranceFactory extends InsuranceFactory {
-// 	createInsurance(): ABInsurance {
-// 		return new ABInsurance();
-// 	}
-// }
+Service1.addMap(12, 'ggg');
+Service1.addMap(35, 'jyy');
+Service1.addMap(10, 'hi');
+Service2.getMap(12);
+Service2.getMap(35);
+Service2.getMap(10);
