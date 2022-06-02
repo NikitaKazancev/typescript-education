@@ -1,47 +1,45 @@
-interface IProvider {
-	sendMessage(message: string): void;
-	connect(config: unknown): void;
-	disconnect(): void;
+class Notify {
+	send(template: string, to: string) {
+		console.log(`Отправляю ${template}: ${to}`);
+	}
 }
 
-class TelegramProvider implements IProvider {
-	sendMessage(message: string): void {
+class Log {
+	log(message: string) {
 		console.log(message);
 	}
-	connect(config: string): void {
-		console.log(config);
-	}
-	disconnect(): void {
-		console.log('Disconnected telegram');
+}
+
+class Template {
+	private templates = [{ name: 'other', template: '<h1>Шаблон!</h1>' }];
+
+	getByName(name: string) {
+		return this.templates.find(obj => obj.name == name);
 	}
 }
 
-class WhatsAppProvider implements IProvider {
-	sendMessage(message: string): void {
-		console.log(message);
+class NotificationFacade {
+	private notify: Notify;
+	private logger: Log;
+	private template: Template;
+
+	constructor() {
+		this.notify = new Notify();
+		this.logger = new Log();
+		this.template = new Template();
 	}
-	connect(config: string): void {
-		console.log(config);
-	}
-	disconnect(): void {
-		console.log('Disconnected whatsapp');
+
+	send(to: string, templateName: string) {
+		const data = this.template.getByName(templateName);
+		if (!data) {
+			this.logger.log('No such a template');
+			return;
+		}
+
+		this.notify.send(data.template, to);
+		this.logger.log('Шаблон отправлен');
 	}
 }
 
-class NotificationCenter {
-	constructor(private provider: IProvider) {}
-
-	send() {
-		this.provider.connect('connect');
-		this.provider.sendMessage('message');
-		this.provider.disconnect();
-	}
-}
-
-class DelayNotificationCenter extends NotificationCenter {
-	sendDelayed() {}
-}
-
-const sender = new DelayNotificationCenter(new TelegramProvider());
-sender.sendDelayed();
-sender.send();
+const s = new NotificationFacade();
+s.send('my email', 'other');
