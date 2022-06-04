@@ -1,55 +1,55 @@
-class DeliveryProduct {
-	constructor(private price: number) {}
+interface IMiddleware {
+	next(mid: IMiddleware): IMiddleware;
+	handle(request: any): any;
+}
 
-	getPrice(): number {
-		return this.price;
+abstract class AbstractMiddleware implements IMiddleware {
+	private nextMiddleware: IMiddleware;
+
+	next(mid: IMiddleware): IMiddleware {
+		this.nextMiddleware = mid;
+		return mid;
+	}
+	handle(request: any): any {
+		if (this.nextMiddleware) return this.nextMiddleware.handle(request);
+		return;
 	}
 }
 
-type Item = DeliveryProduct | DeliveryItem;
-
-abstract class DeliveryItem {
-	items: Item[] = [];
-
-	abstract getPrice(): number;
-
-	getItemsPrice(): number {
-		return this.items.reduce(
-			(acc: number, item: Item) => acc + item.getPrice(),
-			0
-		);
-	}
-
-	addItem(item: Item): void {
-		this.items.push(item);
+class AuthMiddleware extends AbstractMiddleware {
+	override handle(request: any) {
+		console.log('AuthMiddleware');
+		if (request.user.id === 1) return super.handle(request);
+		return { error: 'not authorized' };
 	}
 }
 
-class DeliveryShop extends DeliveryItem {
-	constructor(private deliveryPrice: number) {
-		super();
-	}
-
-	getPrice(): number {
-		return this.getItemsPrice() + this.deliveryPrice;
+class ValidateMiddleware extends AbstractMiddleware {
+	override handle(request: any) {
+		console.log('ValidateMiddleware');
+		if (request.body) return super.handle(request);
+		return { error: 'validate error' };
 	}
 }
 
-class DeliveryPackage extends DeliveryItem {
-	getPrice(): number {
-		return this.getItemsPrice();
+class Controller extends AbstractMiddleware {
+	override handle(request: any) {
+		console.log('Controller');
+		return { success: request };
 	}
 }
 
-const shop = new DeliveryShop(200);
-const package1 = new DeliveryPackage();
-package1.addItem(new DeliveryProduct(100));
-package1.addItem(new DeliveryProduct(2000));
-shop.addItem(package1);
-shop.addItem(new DeliveryProduct(300));
-shop.addItem(new DeliveryPackage());
-if (shop.items[2] instanceof DeliveryItem) {
-	shop.items[2].addItem(new DeliveryProduct(1));
-}
+const controller = new Controller();
+const validate = new ValidateMiddleware();
+const auth = new AuthMiddleware();
 
-console.log(shop.getPrice());
+auth.next(validate).next(controller);
+
+console.log(
+	auth.handle({
+		user: {
+			id: 1,
+		},
+		// body: 2,
+	})
+);
