@@ -1,56 +1,80 @@
-interface IMediator {
-	notify(sender: string, event: string): void;
+class User {
+	constructor(public userId: number) {}
 }
 
-abstract class Mediated {
-	mediator: IMediator;
-	setMediator(mediator: IMediator) {
-		this.mediator = mediator;
+class CommandHistory {
+	public commands: Command[] = [];
+	push(command: Command) {
+		this.commands.push(command);
+	}
+	remove(command: Command) {
+		this.commands = this.commands.filter(
+			c => c.commandId != command.commandId
+		);
 	}
 }
 
-class Notifications {
-	send() {
-		console.log('Отправляю уведомление...');
+abstract class Command {
+	public commandId: number;
+
+	abstract execute(): void;
+
+	constructor(public history: CommandHistory) {
+		this.commandId = Math.random();
 	}
 }
 
-class Log {
-	log(message: string) {
-		console.log(message);
-	}
-}
-
-class EventHandler extends Mediated {
-	myEvent() {
-		this.mediator.notify('EventHandler', 'my event');
-	}
-}
-
-class NotificationMediator implements IMediator {
+class AddUserCommand extends Command {
 	constructor(
-		public notifications: Notifications,
-		public logger: Log,
-		public handler: EventHandler
-	) {}
+		private user: User,
+		private receiver: UserService,
+		history: CommandHistory
+	) {
+		super(history);
+	}
 
-	notify(_: string, event: string): void {
-		switch (event) {
-			case 'my event':
-				this.notifications.send();
-				this.logger.log('Логирую...');
-				break;
-		}
+	execute(): void {
+		this.receiver.saveUser(this.user);
+		this.history.push(this);
+	}
+
+	undo() {
+		this.receiver.deleteUser(this.user.userId);
+		this.history.remove(this);
 	}
 }
 
-const handler = new EventHandler();
-const logger = new Log();
-const notifications = new Notifications();
-const notificationMediator = new NotificationMediator(
-	notifications,
-	logger,
-	handler
-);
-handler.setMediator(notificationMediator);
-handler.myEvent();
+class UserService {
+	saveUser(user: User) {
+		console.log(`Saving user with id ${user.userId}`);
+	}
+
+	deleteUser(userId: number) {
+		console.log(`Deleting user with id ${userId}`);
+	}
+}
+
+class Controller {
+	receiver: UserService;
+	history: CommandHistory = new CommandHistory();
+
+	addReceiver(receiver: UserService) {
+		this.receiver = receiver;
+	}
+
+	run() {
+		const addUserCommand = new AddUserCommand(
+			new User(1),
+			this.receiver,
+			this.history
+		);
+		addUserCommand.execute();
+		console.log(addUserCommand.history);
+		addUserCommand.undo();
+		console.log(addUserCommand.history);
+	}
+}
+
+const controller = new Controller();
+controller.addReceiver(new UserService());
+controller.run();
